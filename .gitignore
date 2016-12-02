@@ -216,3 +216,4 @@ ModelManifest.xml
 # Spare library folders
 !glew-1.11.0/**
 !**/glew32.dll
+!glew32.dll
