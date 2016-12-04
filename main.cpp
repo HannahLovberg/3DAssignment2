@@ -7,8 +7,10 @@
 #include <fstream>
 #include <streambuf>
 
+#define GLFW_DLL
 #include <gl/glew.h>
 #include <gl/GL.h>
+#include "Timer.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
@@ -22,6 +24,8 @@ HGLRC CreateOpenGLContext(HWND wndHandle);
 GLuint gVertexBuffer = 0;
 GLuint gVertexAttribute = 0;
 GLuint gShaderProgram = 0;
+
+Timer timer;
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
@@ -116,10 +120,21 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(gShaderProgram);
+	
+
+	GLfloat timeValue = timer.seconds();
+	GLfloat greenValue = abs(sin(timeValue));
+
+	GLint myColor = glGetUniformLocation(gShaderProgram, "myColor");
+	glUseProgram(gShaderProgram);
+	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);
+
+
 	glBindVertexArray(gVertexAttribute);
 	
 	// draw 3 vertices starting from index 0 in the vertex array currently bound (VAO), with current in-use shader
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }
 
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
