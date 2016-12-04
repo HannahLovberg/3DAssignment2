@@ -11,9 +11,10 @@
 #include <gl/glew.h>
 #include <gl/GL.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "glm-0.9.8.3\glm\glm\glm.hpp"
+#include "glm-0.9.8.3\glm\glm\gtc\matrix_transform.hpp"
+#include "glm-0.9.8.3\glm\glm\gtc\type_ptr.hpp"
+
 
 #include "Timer.h"
 
@@ -134,8 +135,12 @@ void Render()
 	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
 
 	/////////////Rotate/////////////////
-	
+	glm::mat4 transform;
+	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+	transform = glm::rotate(transform, (GLfloat)timer.seconds() * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
+	GLint transformLocation = glGetUniformLocation(gShaderProgram, "transform");
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
 	glBindVertexArray(gVertexAttribute);
 	

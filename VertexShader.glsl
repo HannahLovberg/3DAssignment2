@@ -8,5 +8,5 @@ uniform mat4 transform;
 
 void main() {
 	color = vertex_color;
-	gl_Position = vec4(vertex_position, 1.0);
+	gl_Position = transform * vec4(vertex_position, 1.0f);
 }
