@@ -8,5 +8,5 @@ uniform vec4 myColor;
 
 void main () {
 
-	fragment_color = ourColor;
+	fragment_color = myColor;
 }
