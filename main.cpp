@@ -126,7 +126,6 @@ void Render()
 	GLfloat greenValue = abs(sin(timeValue));
 
 	GLint myColor = glGetUniformLocation(gShaderProgram, "myColor");
-	glUseProgram(gShaderProgram);
 	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);
 
 

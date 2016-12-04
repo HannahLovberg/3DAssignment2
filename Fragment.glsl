@@ -6,6 +6,7 @@ uniform vec4 myColor;
 
 
 
+
 void main () {
 
 	fragment_color = myColor;
