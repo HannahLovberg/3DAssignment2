@@ -10,6 +10,11 @@
 #define GLFW_DLL
 #include <gl/glew.h>
 #include <gl/GL.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Timer.h"
 
 #pragma comment(lib, "opengl32.lib")
@@ -121,12 +126,15 @@ void Render()
 
 	glUseProgram(gShaderProgram);
 	
-
-	GLfloat timeValue = timer.seconds();
+	///////////////Green fade-out////////////////////////
+	/*GLfloat timeValue = timer.seconds();
 	GLfloat greenValue = abs(sin(timeValue));
 
 	GLint myColor = glGetUniformLocation(gShaderProgram, "myColor");
-	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);
+	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
+
+	/////////////Rotate/////////////////
+	
 
 
 	glBindVertexArray(gVertexAttribute);
