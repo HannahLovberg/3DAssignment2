@@ -82,10 +82,10 @@ void CreateTriangleData()
 	TriangleVertex triangleVertices[4] = 
 	{
 		// pos, color, texPos for each vertex
-		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,  -1.0f, 1.0f },
+		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 1.0f },
 		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 1.0f },
-		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,  -1.0f, -1.0f },
-		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, -1.0f }
+		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 0.0f },
+		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 0.0f }
 	};
 
 	
@@ -155,7 +155,7 @@ void Render()
 
 	glBindVertexArray(gVertexAttribute);
 	
-	// draw 3 vertices starting from index 0 in the vertex array currently bound (VAO), with current in-use shader
+	
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
 }
