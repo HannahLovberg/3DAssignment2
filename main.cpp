@@ -35,35 +35,6 @@ Timer timer;
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
-glm::mat4 viewMatrix(glm::vec3 cameraPosition, glm::vec3 targetPosition)
-{
-	glm::vec3 reverseDirection = glm::normalize(cameraPosition - targetPosition);
-	//What is up in the world. 
-	glm::vec3 up = { 0.0f, 1.0f, 0.0f };
-	glm::vec3 cameraRight = glm::normalize(glm::cross(up, reverseDirection));
-
-	//Camera up
-	glm::vec3 cameraUp = glm::cross(reverseDirection, cameraRight);
-
-	glm::mat4 lookAt =
-	{
-		glm::vec4(cameraRight, 0.0f),
-		glm::vec4(cameraUp, 0.0f),
-		glm::vec4(reverseDirection, 0.0f),
-		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
-	};
-
-	glm::mat4 translateMatrix =
-	{
-		1.0f, 0.0f, 0.0f, cameraPosition.x,
-		0.0f, 1.0f, 0.0f, cameraPosition.y,
-		0.0f, 0.0f, 1.0f, cameraPosition.z,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
-
-	return lookAt*translateMatrix;
-
-}
 
 void CreateShaders()
 {
@@ -201,7 +172,12 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		ShowWindow(wndHandle, nCmdShow);
 
 		///////View//////////
-		glm::mat4 view = viewMatrix({ 0.0f, 0.0f, -2.0 }, { 0.0f, 0.0f, 0.0f });
+		glm::mat4 view = glm::lookAt(
+			glm::vec3(0.0f, 0.0f, -2.0f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
+
 
 		glUseProgram(gShaderProgram);
 		GLint viewLocation = glGetUniformLocation(gShaderProgram, "view");
