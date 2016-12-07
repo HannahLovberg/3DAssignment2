@@ -171,6 +171,8 @@ void Render()
 	GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
 
+	
+
 	glBindVertexArray(gVertexAttribute);
 	
 	// draw 3 vertices starting from index 0 in the vertex array currently bound (VAO), with current in-use shader
@@ -213,7 +215,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			0.1f,
 			20.0f
 		);
-		//glUseProgram(gShaderProgram);
+
 		GLint projectionLocation = glGetUniformLocation(gShaderProgram, "projection");
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
