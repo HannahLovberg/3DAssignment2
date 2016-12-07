@@ -136,11 +136,11 @@ void Render()
 	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
 
 	/////////////Rotate/////////////////
-	glm::mat4 world;
-	world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 1.0f, 0.0f));
+	/*glm::mat4 world;
+	world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.5f, 0.0f));
 
 	GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));*/
 
 	
 
@@ -206,6 +206,13 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			}
 			else
 			{
+				/////////////Rotate/////////////////
+				glm::mat4 world;
+				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.5f, 0.0f));
+
+				GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
+				glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
+
 				Render(); //9. Rendera
 
 				SwapBuffers(hDC); //10. Växla front- och back-buffer
