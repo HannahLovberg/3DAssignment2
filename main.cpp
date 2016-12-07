@@ -120,7 +120,7 @@ void CreateTriangleData()
 	glVertexAttribPointer(vertexColor, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
 
 	//Texture
-	glVertexAttribLPointer(2, 2, GL_FLOAT, 8* sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT,GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*6));
 	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
@@ -246,9 +246,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
 				glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
 
-				glActiveTexture(GL_TEXTURE0);
+				//glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texture);
-				glUniform1i(glGetUniformLocation(gShaderProgram, "ourTexture"), 0);
+				//glUniform1i(glGetUniformLocation(gShaderProgram, "ourTexture"), 0);
 				
 
 				Render(); //9. Rendera
