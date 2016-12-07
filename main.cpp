@@ -216,6 +216,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			20.0f
 		);
 
+		glUseProgram(gShaderProgram);
 		GLint projectionLocation = glGetUniformLocation(gShaderProgram, "projection");
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
