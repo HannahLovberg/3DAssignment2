@@ -15,6 +15,7 @@
 #include "glm-0.9.8.3\glm\glm\gtc\matrix_transform.hpp"
 #include "glm-0.9.8.3\glm\glm\gtc\type_ptr.hpp"
 
+#include"bth_image.h"
 
 #include "Timer.h"
 
@@ -75,27 +76,32 @@ void CreateTriangleData()
 	{
 		float x, y, z;
 		float r, g, b;
+		float texPos1, texPos2;
 	};
 	// create the actual data in plane Z = 0
 	TriangleVertex triangleVertices[4] = 
 	{
-		// pos and color for each vertex
-		{ -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f },
-		{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f },
-		{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, .0f }
+		// pos, color, texPos for each vertex
+		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,  -1.0f, 1.0f },
+		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 1.0f },
+		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,  -1.0f, -1.0f },
+		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, -1.0f }
 	};
+
+	
 
 	// Vertex Array Object (VAO) 
 	glGenVertexArrays(1, &gVertexAttribute);
-	// bind == enable
+	glGenBuffers(1, &gVertexBuffer);
+
 	glBindVertexArray(gVertexAttribute);
+
 	// this activates the first and second attributes of this VAO
 	glEnableVertexAttribArray(0); 
 	glEnableVertexAttribArray(1);
 
 	// create a vertex buffer object (VBO) id
-	glGenBuffers(1, &gVertexBuffer);
+
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 	// This "could" imply copying to the GPU, depending on what the driver wants to do...
@@ -112,6 +118,17 @@ void CreateTriangleData()
 	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset (12 bytes) of the gVertexBuffer 
 	glVertexAttribPointer(vertexColor, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
+
+	//Texture
+	glVertexAttribLPointer(2, 2, GL_FLOAT, 8* sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0);
+
+
+	
+
+
 }
 
 void SetViewport()
@@ -135,14 +152,6 @@ void Render()
 	GLint myColor = glGetUniformLocation(gShaderProgram, "myColor");
 	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
 
-	/////////////Rotate/////////////////
-	/*glm::mat4 world;
-	world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.5f, 0.0f));
-
-	GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));*/
-
-	
 
 	glBindVertexArray(gVertexAttribute);
 	
@@ -197,6 +206,30 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
 
+		//////// Textur /////////////
+
+		GLuint texture;
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		//texture parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		//filtering
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//load, create mipmap
+
+		int width = 64;
+		int height = 64;
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, BTH_IMAGE_DATA);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
 		while (WM_QUIT != msg.message)
 		{
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -208,10 +241,15 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			{
 				/////////////Rotate/////////////////
 				glm::mat4 world;
-				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.5f, 0.0f));
+				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.05f, 0.0f));
 
 				GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
 				glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(gShaderProgram, "ourTexture"), 0);
+				
 
 				Render(); //9. Rendera
 

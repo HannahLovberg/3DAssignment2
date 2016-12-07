@@ -1,8 +1,12 @@
 #version 400
 in vec3 color;
+in vec2 TexCoord;
+
 out vec4 fragment_color;
 
-void main () {
+uniform sampler2D ourTexture; 
 
-	fragment_color = vec4(color, 1.0f);
+void main () {
+	
+	fragment_color = texture(ourTexture, TexCoord) * vec4(color, 1.0f);
 }
