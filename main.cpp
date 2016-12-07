@@ -35,6 +35,36 @@ Timer timer;
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
+glm::mat4 viewMatrix(glm::vec3 cameraPosition, glm::vec3 targetPosition)
+{
+	glm::vec3 reverseDirection = glm::normalize(cameraPosition - targetPosition);
+	//What is up in the world. 
+	glm::vec3 up = { 0.0f, 1.0f, 0.0f };
+	glm::vec3 cameraRight = glm::normalize(glm::cross(up, reverseDirection));
+
+	//Camera up
+	glm::vec3 cameraUp = glm::cross(reverseDirection, cameraRight);
+
+	glm::mat4 lookAt =
+	{
+		glm::vec4(cameraRight, 0.0f),
+		glm::vec4(cameraUp, 0.0f),
+		glm::vec4(reverseDirection, 0.0f),
+		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+	};
+
+	glm::mat4 translateMatrix =
+	{
+		1.0f, 0.0f, 0.0f, cameraPosition.x,
+		0.0f, 1.0f, 0.0f, cameraPosition.y,
+		0.0f, 0.0f, 1.0f, cameraPosition.z,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	return lookAt*translateMatrix;
+
+}
+
 void CreateShaders()
 {
 	//create vertex shader
@@ -135,12 +165,11 @@ void Render()
 	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
 
 	/////////////Rotate/////////////////
-	glm::mat4 transform;
-	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
-	transform = glm::rotate(transform, (GLfloat)timer.seconds() * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 world;
+	world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	GLint transformLocation = glGetUniformLocation(gShaderProgram, "transform");
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+	GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
 
 	glBindVertexArray(gVertexAttribute);
 	
@@ -168,6 +197,26 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		CreateTriangleData(); //6. Definiera triangelvertiser, 7. Skapa vertex buffer object (VBO), 8.Skapa vertex array object (VAO)
 
 		ShowWindow(wndHandle, nCmdShow);
+
+		///////View//////////
+		glm::mat4 view = viewMatrix({ 0.0f, 0.0f, -2.0 }, { 0.0f, 0.0f, 0.0f });
+
+		glUseProgram(gShaderProgram);
+		GLint viewLocation = glGetUniformLocation(gShaderProgram, "view");
+		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+
+		///////////Projection/////////////
+		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
+		glm::mat4 projection = glm::perspective(
+			FoV,
+			(640.0f / 480.0f),
+			0.1f,
+			20.0f
+		);
+		//glUseProgram(gShaderProgram);
+		GLint projectionLocation = glGetUniformLocation(gShaderProgram, "projection");
+		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+
 
 		while (WM_QUIT != msg.message)
 		{
