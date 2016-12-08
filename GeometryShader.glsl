@@ -1,16 +1,14 @@
-layout (square) in;
+layout (triangle) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 in VS_OUT 
 {
 	vec3 normal;
-} gs_in[];
+} 
 
-const float MAGNITUDE = 0.4f;
+gs_in[];
 
-uniform mat4 world;
-uniform mat4 view;
-uniform mat4 projection;
+const float MAGNITUDE = 0.2f;
 
 void GenerateLine(int index)
 {
@@ -27,6 +25,4 @@ void main()
 	GenerateLine(1);
 	GenerateLine(2);
 	GenerateLine(3);
-
-	gl_Position = projection * view * world * vec4(vertex_position, 1.0f);
 }
