@@ -200,14 +200,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		);
 
 
-		//glUseProgram(gShaderProgram);
-		//GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "view");
-		//glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(view));
-		////geo shader
-		//glUseProgram(normalShader);
-		//GLint viewLocation1 = glGetUniformLocation(normalShader, "view");
-		//glUniformMatrix4fv(viewLocation1, 1, GL_FALSE, glm::value_ptr(view));
-
 
 		///////////Projection/////////////
 		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
