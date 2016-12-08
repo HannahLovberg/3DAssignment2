@@ -100,10 +100,10 @@ void CreateTriangleData()
 	TriangleVertex triangleVertices[4] = 
 	{
 		// pos, color, texPos for each vertex
-		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 1.0f },
-		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 1.0f },
-		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 0.0f },
-		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 0.0f }
+		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 1.0f }, //Top left
+		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 1.0f }, //top right
+		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 0.0f }, //bottom lef
+		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 0.0f }  //bottom right
 	};
 
 	
