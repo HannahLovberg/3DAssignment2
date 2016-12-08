@@ -31,6 +31,7 @@ HGLRC CreateOpenGLContext(HWND wndHandle);
 GLuint gVertexBuffer = 0;
 GLuint gVertexAttribute = 0;
 GLuint gShaderProgram = 0;
+GLuint normalShader = 0;
 
 Timer timer;
 
@@ -61,11 +62,28 @@ void CreateShaders()
 	glShaderSource(fs, 1, &shaderTextPtr, nullptr);
 	glCompileShader(fs);
 
+	//Geometry shader
+	GLuint gs = glCreateShader(GL_GEOMETRY_SHADER);
+	shaderFile.open("GeometryShader.glsl");
+	shaderText.assign((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
+	shaderFile.close();
+	shaderTextPtr = shaderText.c_str();
+	glShaderSource(gs, 1, &shaderTextPtr, nullptr);
+	glCompileShader(gs);
+
 	//link shader program (connect vs and ps)
 	gShaderProgram = glCreateProgram();
 	glAttachShader(gShaderProgram, fs);
 	glAttachShader(gShaderProgram, vs);
 	glLinkProgram(gShaderProgram);
+
+	normalShader = glCreateProgram();
+	glAttachShader(normalShader, vs);
+	glAttachShader(normalShader, fs);
+	glAttachShader(normalShader, gs);
+	glLinkProgram(normalShader);
+
+
 }
 
 void CreateTriangleData()
@@ -144,13 +162,7 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(gShaderProgram);
-	
-	///////////////Green fade-out////////////////////////
-	/*GLfloat timeValue = timer.seconds();
-	GLfloat greenValue = abs(sin(timeValue));
-
-	GLint myColor = glGetUniformLocation(gShaderProgram, "myColor");
-	glUniform4f(myColor, 0.0f, greenValue, 0.0f, 1.0f);*/
+	glUseProgram(normalShader);
 
 
 	glBindVertexArray(gVertexAttribute);
@@ -188,9 +200,14 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		);
 
 
-		glUseProgram(gShaderProgram);
-		GLint viewLocation = glGetUniformLocation(gShaderProgram, "view");
-		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+		//glUseProgram(gShaderProgram);
+		//GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "view");
+		//glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(view));
+		////geo shader
+		//glUseProgram(normalShader);
+		//GLint viewLocation1 = glGetUniformLocation(normalShader, "view");
+		//glUniformMatrix4fv(viewLocation1, 1, GL_FALSE, glm::value_ptr(view));
+
 
 		///////////Projection/////////////
 		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
@@ -202,8 +219,12 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		);
 
 		glUseProgram(gShaderProgram);
-		GLint projectionLocation = glGetUniformLocation(gShaderProgram, "projection");
-		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projection");
+		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projection));
+		//normal shader
+		glUseProgram(normalShader);
+		GLint projectionLocation1 = glGetUniformLocation(normalShader, "projection");
+		glUniformMatrix4fv(projectionLocation1, 1, GL_FALSE, glm::value_ptr(projection));
 
 
 		//////// Textur /////////////
@@ -239,16 +260,37 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			}
 			else
 			{
+
+				///////// view ////////
+				glUseProgram(gShaderProgram);
+				GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "view");
+				glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(view));
+
 				/////////////Rotate/////////////////
 				glm::mat4 world;
-				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, 0.05f, 0.0f));
+				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, -0.05f, 0.0f));
 
-				GLint transformLocation = glGetUniformLocation(gShaderProgram, "world");
-				glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(world));
+				glUseProgram(gShaderProgram);
+				GLint transformLocation0 = glGetUniformLocation(gShaderProgram, "world");
+				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(world));
 
-				//glActiveTexture(GL_TEXTURE0);
+
+
+
+				//////////// view /////////
+				//normal shader
+				glUseProgram(normalShader);
+				GLint viewLocation1 = glGetUniformLocation(normalShader, "view");
+				glUniformMatrix4fv(viewLocation1, 1, GL_FALSE, glm::value_ptr(view));
+				/////// rotate /////////
+				//normal shader
+				glUseProgram(normalShader);
+				GLint transformLocation1 = glGetUniformLocation(normalShader, "world");
+				glUniformMatrix4fv(transformLocation1, 1, GL_FALSE, glm::value_ptr(world));
+
+				
 				glBindTexture(GL_TEXTURE_2D, texture);
-				//glUniform1i(glGetUniformLocation(gShaderProgram, "ourTexture"), 0);
+				
 				
 
 				Render(); //9. Rendera

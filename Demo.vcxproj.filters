@@ -26,6 +26,9 @@
     <None Include="Fragment.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="GeometryShader.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Timer.h">
