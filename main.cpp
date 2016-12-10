@@ -165,7 +165,7 @@ void Render()
 	glBindVertexArray(gVertexAttribute);
 	
 	
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDrawArrays(GL_POINTS, 0, 4);
 	glBindVertexArray(0);
 }
 
