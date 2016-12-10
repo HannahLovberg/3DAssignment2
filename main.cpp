@@ -127,12 +127,15 @@ void CreateTriangleData()
 
 	// query where which slot corresponds to the input vertex_position in the Vertex Shader 
 	GLuint vertexPos = glGetAttribLocation(gShaderProgram, "vertex_position");
+	GLuint vertexPosGeo = glGetAttribLocation(normalShader, "vertex_position");
+
 	// specify that: the vertex attribute "vertexPos", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset 0 of the gVertexBuffer (it is implicitly bound!)
 	glVertexAttribPointer(vertexPos, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(0));
 
 	// query where which slot corresponds to the input vertex_color in the Vertex Shader 
 	GLuint vertexColor = glGetAttribLocation(gShaderProgram, "vertex_color");
+	GLuint vertexColorGeo = glGetAttribLocation(normalShader, "vertex_color");
 	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset (12 bytes) of the gVertexBuffer 
 	glVertexAttribPointer(vertexColor, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
@@ -140,6 +143,8 @@ void CreateTriangleData()
 	//Texture
 	glVertexAttribPointer(2, 2, GL_FLOAT,GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*6));
 	glEnableVertexAttribArray(2);
+
+
 
 	glBindVertexArray(0);
 
