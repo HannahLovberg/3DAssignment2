@@ -7,6 +7,7 @@
 #include <fstream>
 #include <streambuf>
 #include <iostream>
+#include <sstream>
 
 #define GLFW_DLL
 #include <gl/glew.h>
@@ -49,7 +50,11 @@ void getShaderError(GLuint shader)
 		glGetShaderInfoLog(shader, msgSize, nullptr, msg);
 		glDeleteShader(shader);
 
-		std::cout << msg << endl;
+		std::wstring wmsg(strlen(msg), L'#');
+		mbstowcs(&wmsg[0], msg, strlen(msg));
+		MessageBox(0, wmsg.c_str(), L"Compile Error", MB_OK);
+		delete[] msg;
+		exit(-1);
 	}
 }
 
@@ -211,17 +216,20 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		ShowWindow(wndHandle, nCmdShow);
 
 		///////View//////////
-		glm::mat4 view = glm::lookAt(
+		glm::mat4 viewMatrix = glm::lookAt(
 			glm::vec3(0.0f, 0.0f, -2.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-
+		///////// view ////////
+		glUseProgram(gShaderProgram);
+		GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "viewMatrix");
+		glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
 		///////////Projection/////////////
 		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
-		glm::mat4 projection = glm::perspective(
+		glm::mat4 projectionMatrx = glm::perspective(
 			FoV,
 			(640.0f / 480.0f),
 			0.1f,
@@ -229,8 +237,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		);
 
 		glUseProgram(gShaderProgram);
-		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projection");
-		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projection));
+		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projectionMatrx");
+		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projectionMatrx));
 
 
 
@@ -268,22 +276,19 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			else
 			{
 
-				///////// view ////////
-				glUseProgram(gShaderProgram);
-				GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "view");
-				glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(view));
+				
 
 				/////////////Rotate/////////////////
-				glm::mat4 world;
-				world = glm::rotate(world, (GLfloat)timer.seconds(), glm::vec3(0.0f, -0.05f, 0.0f));
+				glm::mat4 worldMatrix;
+				worldMatrix = glm::rotate(worldMatrix, (GLfloat)timer.seconds(), glm::vec3(0.0f, -0.05f, 0.0f));
 
 				glUseProgram(gShaderProgram);
-				GLint transformLocation0 = glGetUniformLocation(gShaderProgram, "world");
-				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(world));
+				GLint transformLocation0 = glGetUniformLocation(gShaderProgram, "worldMatrix");
+				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 		
 				glBindTexture(GL_TEXTURE_2D, texture);
-				
-				
+
+			
 
 				Render(); //9. Rendera
 
