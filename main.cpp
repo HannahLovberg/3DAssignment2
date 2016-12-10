@@ -37,6 +37,21 @@ Timer timer;
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 
+void getShaderError(GLuint shader)
+{
+	GLint success = 0;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE) {
+		GLint msgSize = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &msgSize);
+		char* msg = new char[msgSize];
+		glGetShaderInfoLog(shader, msgSize, nullptr, msg);
+		glDeleteShader(shader);
+
+		std::cout << msg << endl;
+	}
+}
+
 void CreateShaders()
 {
 	//create vertex shader
@@ -51,6 +66,7 @@ void CreateShaders()
 	glShaderSource(vs, 1, &shaderTextPtr, nullptr);
 	// ask GL to compile it
 	glCompileShader(vs);
+	getShaderError(vs);
 
 	//create fragment shader | same process.
 	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -60,6 +76,7 @@ void CreateShaders()
 	shaderTextPtr = shaderText.c_str();
 	glShaderSource(fs, 1, &shaderTextPtr, nullptr);
 	glCompileShader(fs);
+	getShaderError(fs);
 
 	//Geometry shader
 	GLuint gs = glCreateShader(GL_GEOMETRY_SHADER);
@@ -69,6 +86,7 @@ void CreateShaders()
 	shaderTextPtr = shaderText.c_str();
 	glShaderSource(gs, 1, &shaderTextPtr, nullptr);
 	glCompileShader(gs);
+	getShaderError(gs);
 
 	//link shader program (connect vs and ps)
 	gShaderProgram = glCreateProgram();
@@ -80,6 +98,8 @@ void CreateShaders()
 
 
 }
+
+
 
 void CreateTriangleData()
 {
