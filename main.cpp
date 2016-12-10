@@ -31,7 +31,6 @@ HGLRC CreateOpenGLContext(HWND wndHandle);
 GLuint gVertexBuffer = 0;
 GLuint gVertexAttribute = 0;
 GLuint gShaderProgram = 0;
-GLuint normalShader = 0;
 
 Timer timer;
 
@@ -75,13 +74,9 @@ void CreateShaders()
 	gShaderProgram = glCreateProgram();
 	glAttachShader(gShaderProgram, fs);
 	glAttachShader(gShaderProgram, vs);
+	glAttachShader(gShaderProgram, gs);
 	glLinkProgram(gShaderProgram);
 
-	normalShader = glCreateProgram();
-	glAttachShader(normalShader, vs);
-	glAttachShader(normalShader, fs);
-	glAttachShader(normalShader, gs);
-	glLinkProgram(normalShader);
 
 
 }
@@ -127,7 +122,6 @@ void CreateTriangleData()
 
 	// query where which slot corresponds to the input vertex_position in the Vertex Shader 
 	GLuint vertexPos = glGetAttribLocation(gShaderProgram, "vertex_position");
-	GLuint vertexPosGeo = glGetAttribLocation(normalShader, "vertex_position");
 
 	// specify that: the vertex attribute "vertexPos", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset 0 of the gVertexBuffer (it is implicitly bound!)
@@ -135,7 +129,6 @@ void CreateTriangleData()
 
 	// query where which slot corresponds to the input vertex_color in the Vertex Shader 
 	GLuint vertexColor = glGetAttribLocation(gShaderProgram, "vertex_color");
-	GLuint vertexColorGeo = glGetAttribLocation(normalShader, "vertex_color");
 	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
 	//               starts at offset (12 bytes) of the gVertexBuffer 
 	glVertexAttribPointer(vertexColor, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
@@ -167,7 +160,6 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(gShaderProgram);
-	glUseProgram(normalShader);
 
 
 	glBindVertexArray(gVertexAttribute);
@@ -218,10 +210,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		glUseProgram(gShaderProgram);
 		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projection");
 		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projection));
-		//normal shader
-		glUseProgram(normalShader);
-		GLint projectionLocation1 = glGetUniformLocation(normalShader, "projection");
-		glUniformMatrix4fv(projectionLocation1, 1, GL_FALSE, glm::value_ptr(projection));
+
 
 
 		//////// Textur /////////////
@@ -272,18 +261,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(world));
 
 
-
-
-				//////////// view /////////
-				//normal shader
-				glUseProgram(normalShader);
-				GLint viewLocation1 = glGetUniformLocation(normalShader, "view");
-				glUniformMatrix4fv(viewLocation1, 1, GL_FALSE, glm::value_ptr(view));
-				/////// rotate /////////
-				//normal shader
-				glUseProgram(normalShader);
-				GLint transformLocation1 = glGetUniformLocation(normalShader, "world");
-				glUniformMatrix4fv(transformLocation1, 1, GL_FALSE, glm::value_ptr(world));
 
 				
 				glBindTexture(GL_TEXTURE_2D, texture);
