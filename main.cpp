@@ -259,10 +259,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				glUseProgram(gShaderProgram);
 				GLint transformLocation0 = glGetUniformLocation(gShaderProgram, "world");
 				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(world));
-
-
-
-				
+		
 				glBindTexture(GL_TEXTURE_2D, texture);
 				
 				

@@ -1,11 +1,4 @@
-#version 400
-in vec3 color;
-
-out vec4 fragment_color;
-
-
-
-void main () 
+void main(void)
 {
-	fragment_color = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
 }
