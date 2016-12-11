@@ -191,7 +191,7 @@ void Render()
 	glBindVertexArray(gVertexAttribute);
 	
 	
-	glDrawArrays(GL_POINTS, 0, 4);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
 }
 
@@ -229,7 +229,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		///////////Projection/////////////
 		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
-		glm::mat4 projectionMatrx = glm::perspective(
+		glm::mat4 projectionMatrix = glm::perspective(
 			FoV,
 			(640.0f / 480.0f),
 			0.1f,
@@ -237,8 +237,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		);
 
 		glUseProgram(gShaderProgram);
-		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projectionMatrx");
-		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projectionMatrx));
+		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projectionMatrix");
+		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 
 

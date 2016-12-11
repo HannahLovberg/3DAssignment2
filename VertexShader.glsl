@@ -1,5 +1,11 @@
 #version 430
-in vec3 vertex_position;
+layout(location = 0) in vec3 vertex_position;
+layout(location = 1) in vec3 vertex_color;
+layout(location = 2) in vec2 vertex_uv;
+
+out vec4 geo_position;
+out vec3 geo_color;
+out vec2 geo_uv;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -7,8 +13,8 @@ uniform mat4 worldMatrix;
 
 void main()
 {	
-  vec4 world_pos = worldMatrix * vec4(vertex_position, 0.0f);
-  vec4 view_pos = viewMatrix * world_pos;
-  gl_Position = projectionMatrix * view_pos;
+  geo_position = vec4(vertex_position, 1.0f);
+  geo_color = vertex_color;
+  geo_uv = vertex_uv;
 }
 

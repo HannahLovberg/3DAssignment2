@@ -1,5 +1,13 @@
 #version 430
-void main(void)
+
+in vec3 fPosition;
+in vec3 fColor;
+in vec2 fuv;
+
+uniform sampler2D sampler;
+
+
+void main()
 {
-  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+  gl_FragColor = vec4(fColor, 1.0) * texture(sampler, fuv);
 }
