@@ -120,11 +120,11 @@ void CreateTriangleData()
 	// create the actual data in plane Z = 0
 	TriangleVertex triangleVertices[4] = 
 	{
-		// pos, color, texPos for each vertex
-		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 1.0f }, //Top left
-		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 1.0f }, //top right
-		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 0.0f }, //bottom lef
-		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 0.0f }  //bottom right
+		// pos, color, texPos for each vertex						pos					texPos
+		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 0.0f }, //top left		-- bottom left
+		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 0.0f }, //top right		-- bottom right
+		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 1.0f }, //bottom lef		-- top left
+		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 1.0f }  //bottom right	-- top right
 	};
 
 	
@@ -183,7 +183,7 @@ void Render()
 	// set the color TO BE used
 	glClearColor(0, 0, 0, 1);
 	// use the color to clear the color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(gShaderProgram);
 
@@ -207,6 +207,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		glewInit(); //3. Initiera The OpenGL Extension Wrangler Library (GLEW)
 
+
 		SetViewport(); //4. Sätt viewport
 
 		CreateShaders(); //5. Skapa vertex- och fragment-shaders
@@ -214,6 +215,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		CreateTriangleData(); //6. Definiera triangelvertiser, 7. Skapa vertex buffer object (VBO), 8.Skapa vertex array object (VAO)
 
 		ShowWindow(wndHandle, nCmdShow);
+
+		glEnable(GL_DEPTH_TEST);
+
 
 		///////View//////////
 		glm::mat4 viewMatrix = glm::lookAt(
@@ -360,8 +364,8 @@ HGLRC CreateOpenGLContext(HWND wndHandle)
 		1,                                // version number  
 		PFD_DRAW_TO_WINDOW |              // support window  
 		PFD_SUPPORT_OPENGL |              // support OpenGL  
-		PFD_DOUBLEBUFFER |                // double buffered
-		PFD_DEPTH_DONTCARE,               // disable depth buffer <-- added by Stefan
+		PFD_DOUBLEBUFFER, //  |                // double buffered
+		//PFD_DEPTH_DONTCARE,               // disable depth buffer <-- added by Stefan
 		PFD_TYPE_RGBA,                    // RGBA type  
 		32,                               // 32-bit color depth  
 		0, 0, 0, 0, 0, 0,                 // color bits ignored  

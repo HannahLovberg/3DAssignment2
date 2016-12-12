@@ -29,4 +29,21 @@ void main()
     EmitVertex();
   }
   EndPrimitive();
+
+  vec4 gPos;
+
+  for(int i = 0; i < 3; i++)
+  {
+	gPos = geo_position[i];
+	gPos.z -= 1.0f;
+
+	fPosition = (worldMatrix * gPos).xyz;
+	fColor = geo_color[i];
+	fuv = geo_uv[i];
+
+	gl_Position = pvMatrix * vec4(fPosition, 1.0f);
+	
+    EmitVertex();
+  }
+  EndPrimitive();
 }  
