@@ -34,6 +34,8 @@ GLuint gVertexBuffer = 0;
 GLuint gVertexAttribute = 0;
 GLuint gShaderProgram = 0;
 
+glm::vec3 lightPos(0.0f, 0.0f, -3.0f);
+
 Timer timer;
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
@@ -218,6 +220,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		glEnable(GL_DEPTH_TEST);
 
+
+		GLuint lightPosLocation = glGetUniformLocation(gShaderProgram, "lightPos");
+		glUniform3f(lightPosLocation, lightPos.x, lightPos.y, lightPos.z);
 
 		///////View//////////
 		glm::mat4 viewMatrix = glm::lookAt(
