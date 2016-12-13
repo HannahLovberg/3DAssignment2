@@ -35,6 +35,7 @@ void main()
 {	
 	
   Normal = getTriangleNormal(geo_position[0], geo_position[1], geo_position[2]);
+  Normal = vec4(worldMatrix * vec4(Normal, 0.0f)).xyz;  
 
   for(int i=0; i<3; i++)
   {

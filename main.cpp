@@ -221,9 +221,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		glEnable(GL_DEPTH_TEST);
 
 
-		GLuint lightPosLocation = glGetUniformLocation(gShaderProgram, "lightPos");
-		glUniform3f(lightPosLocation, lightPos.x, lightPos.y, lightPos.z);
-
 		///////View//////////
 		glm::mat4 viewMatrix = glm::lookAt(
 			glm::vec3(0.0f, 0.0f, -2.0f),
@@ -245,9 +242,11 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			20.0f
 		);
 
-		glUseProgram(gShaderProgram);
 		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projectionMatrix");
 		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+		GLuint lightPosLocation = glGetUniformLocation(gShaderProgram, "lightPos");
+		glUniform3f(lightPosLocation, lightPos.x, lightPos.y, lightPos.z);
 
 
 
