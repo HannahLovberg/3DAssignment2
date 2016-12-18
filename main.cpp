@@ -318,15 +318,21 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			{
 				/////////////Rotation/////////////
 				glm::mat4 worldMatrix;
-				worldMatrix = glm::rotate(worldMatrix, (GLfloat)timer.seconds(), glm::vec3(0.0f, -0.05f, 0.0f));
+				worldMatrix = glm::rotate(          //A funktion to rotate the object
+					worldMatrix, 			        //What matrix to rotate
+					(GLfloat)timer.seconds(),       //How much to rotate. How much /second.
+					glm::vec3(0.0f, -0.05f, 0.0f)   //Which axel to rotate on.
+				);
 
+                //Use our shader program
 				glUseProgram(gShaderProgram);
-				GLint transformLocation0 = glGetUniformLocation(gShaderProgram, "worldMatrix");
-				glUniformMatrix4fv(transformLocation0, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+                //Location of our worldMatrix uniform
+				GLint transformLocation = glGetUniformLocation(gShaderProgram, "worldMatrix");
+                //Set the value to the worldMatrix data
+				glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 		
+                //Bind the texture as a 2D texture.
 				glBindTexture(GL_TEXTURE_2D, texture);
-
-			
 
 				Render(); //9. Rendera
 
