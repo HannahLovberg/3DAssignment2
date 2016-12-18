@@ -112,7 +112,7 @@ void CreateShaders()
 void CreateTriangleData()
 {
 	// this is how we will structure the input data for the vertex shader
-	// every six floats, is one vertex.
+	// every eight floats, is one vertex.
 	struct TriangleVertex
 	{
 		float x, y, z;
@@ -123,56 +123,53 @@ void CreateTriangleData()
 	TriangleVertex triangleVertices[4] = 
 	{
 		// pos, color, texPos for each vertex						pos					texPos
-		{ -0.5f, 0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,   0.0f, 0.0f }, //top left		-- bottom left
-		{  0.5f, 0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	 1.0f, 0.0f }, //top right		-- bottom right
-		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,   0.0f, 1.0f }, //bottom lef		-- top left
-		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, .0f,	 1.0f, 1.0f }  //bottom right	-- top right
+		{ -0.5f,  0.5f, 0.0f,	 1.0f, 0.0f, 0.0f,	0.0f, 0.0f }, //top left		-- bottom left
+		{  0.5f,  0.5f, 0.0f,	 1.0f, 1.0f, 0.0f,	1.0f, 0.0f }, //top right		-- bottom right
+		{ -0.5f, -0.5f, 0.0f,	 0.0f, 0.0f, 1.0f,  0.0f, 1.0f }, //bottom lef		-- top left
+		{  0.5f, -0.5f, 0.0f,	 0.0f, 1.0f, 0.0f,	1.0f, 1.0f }  //bottom right	-- top right
 	};
 
 	
 
 	// Vertex Array Object (VAO) 
+	//Creates a new vertex array and sets ID to gVertexAttribute
 	glGenVertexArrays(1, &gVertexAttribute);
-	glGenBuffers(1, &gVertexBuffer);
-
+	//Makes gVertexAttribute active 
 	glBindVertexArray(gVertexAttribute);
 
-	// this activates the first and second attributes of this VAO
-	glEnableVertexAttribArray(0); 
-	glEnableVertexAttribArray(1);
-
+	
 	// create a vertex buffer object (VBO) id
-
+	glGenBuffers(1, &gVertexBuffer);
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-	// This "could" imply copying to the GPU, depending on what the driver wants to do...
+	
+	//Write the data from the array triangleVertices to the graphic card. 
+	//GL_STATIC_DRAW says that the data won't change.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
 
-	// query where which slot corresponds to the input vertex_position in the Vertex Shader 
-	GLuint vertexPos = glGetAttribLocation(gShaderProgram, "vertex_position");
+	
+	//Position
+	glEnableVertexAttribArray(0); //Enable first attribute in vertexArray
+	glVertexAttribPointer(
+		0,						//Attribute location in vertex shader
+		3,    					//Number of values in buffer
+		GL_FLOAT, 				//The value types are floats
+		GL_FALSE,     			//Do not normalize the values
+		sizeof(TriangleVertex), //Stride. The offset between each set of values
+		BUFFER_OFFSET(0)		//Offset from the start of the buffer to the first set of values
+	);
 
-	// specify that: the vertex attribute "vertexPos", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
-	//               starts at offset 0 of the gVertexBuffer (it is implicitly bound!)
-	glVertexAttribPointer(vertexPos, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(0));
-
-	// query where which slot corresponds to the input vertex_color in the Vertex Shader 
-	GLuint vertexColor = glGetAttribLocation(gShaderProgram, "vertex_color");
-	// specify that: the vertex attribute "vertex_color", of 3 elements of type FLOAT, not normalized, with STRIDE != 0,
-	//               starts at offset (12 bytes) of the gVertexBuffer 
-	glVertexAttribPointer(vertexColor, 3,    GL_FLOAT, GL_FALSE,     sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
+	//Color
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*3));
 
 	//Texture
-	glVertexAttribPointer(2, 2, GL_FLOAT,GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*6));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), BUFFER_OFFSET(sizeof(float)*6));
 
 
-
+	//unbind vertex array to avoid accidents.
 	glBindVertexArray(0);
-
-
-	
-
-
 }
 
 void SetViewport()
@@ -182,25 +179,26 @@ void SetViewport()
 
 void Render()
 {
-	// set the color TO BE used
-	glClearColor(0, 0, 0, 1);
-	// use the color to clear the color buffer
+	// use the color to clear the color buffer AND reset the depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //Enable our shaders
 	glUseProgram(gShaderProgram);
 
-
+    //Activate our Vertex Array Object that holds all info about the vertices
 	glBindVertexArray(gVertexAttribute);
 	
-	
+	//Start at position 0 and draw 4 vertices from our VAO as a triangle strip
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    
+    //Unbind
 	glBindVertexArray(0);
 }
 
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 	MSG msg = { 0 };
-	HWND wndHandle = InitWindow(hInstance); //1. Skapa fönster
+	HWND wndHandle = InitWindow(hInstance); //1. Skapa fÃ¶nster
 	
 	if (wndHandle)
 	{
@@ -209,8 +207,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		glewInit(); //3. Initiera The OpenGL Extension Wrangler Library (GLEW)
 
-
-		SetViewport(); //4. Sätt viewport
+		SetViewport(); //4. SÃ¤tt viewport
 
 		CreateShaders(); //5. Skapa vertex- och fragment-shaders
 
@@ -218,35 +215,54 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		ShowWindow(wndHandle, nCmdShow);
 
+        //Allow the program to check if one shape if before the other
 		glEnable(GL_DEPTH_TEST);
+        // set the color TO BE used when clearing the window
+	    glClearColor(0, 0, 0, 1);
 
 
-		///////View//////////
+		////////View////////
 		glm::mat4 viewMatrix = glm::lookAt(
-			glm::vec3(0.0f, 0.0f, -2.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f)
+			glm::vec3(0.0f, 0.0f, -2.0f),   //Position of the camera
+			glm::vec3(0.0f, 0.0f, 0.0f),    //Where the camera is pointed to
+			glm::vec3(0.0f, 1.0f, 0.0f)     //What the UP in the world is
 		);
 
-		///////// view ////////
+        //Use our shaderprogram
 		glUseProgram(gShaderProgram);
-		GLint viewLocation0 = glGetUniformLocation(gShaderProgram, "viewMatrix");
-		glUniformMatrix4fv(viewLocation0, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+        //Find the location of our Uniform "viewMatrix"
+		GLint viewLocation = glGetUniformLocation(gShaderProgram, "viewMatrix");
+        //Set our Uniform "viewMatrix" in our shader program to the viewMatrix above
+		glUniformMatrix4fv(             //set our Uniform data as a 4x4 float matrix
+            viewLocation,               //The location of the uniform
+            1,                          //Number of 4x4 matrices
+            GL_FALSE,                   //Don't transpose matrix
+            glm::value_ptr(viewMatrix)  //Location of the data
+        );
+        
 
 		///////////Projection/////////////
 		GLfloat FoV = glm::pi<GLfloat>() * 0.45f;
 		glm::mat4 projectionMatrix = glm::perspective(
-			FoV,
-			(640.0f / 480.0f),
-			0.1f,
-			20.0f
+			FoV,                //Field of View
+			(640.0f / 480.0f),  //Aspect ratio (windowWidth/windowHeight)
+			0.1f,               //Front-clip plane. Closest distance to camera
+			20.0f               //Back-clip plane. The depth of the FOV. Anything beyond this distance won't be rendered.
 		);
 
-		GLint projectionLocation0 = glGetUniformLocation(gShaderProgram, "projectionMatrix");
-		glUniformMatrix4fv(projectionLocation0, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+        //Find the uniform location
+		GLint projectionLocation = glGetUniformLocation(gShaderProgram, "projectionMatrix");
+        //Set the uniform to the projectionMatrix data
+		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
+        //Find the location of the lightPos Uniform
 		GLuint lightPosLocation = glGetUniformLocation(gShaderProgram, "lightPos");
-		glUniform3f(lightPosLocation, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(            //Set Uniform data as a vec3 with floats
+            lightPosLocation,   //Location of the Uniform
+            lightPos.x,         //the x-value of the uniform
+            lightPos.y,         //the y-value of the uniform
+            lightPos.z          //the z-value of the uniform
+        );
 
 
 
@@ -254,22 +270,39 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 		GLuint texture;
 
+        //Create a Texture Object on the graphics card
 		glGenTextures(1, &texture);
+        //Bind our texture object as a 2D texture
 		glBindTexture(GL_TEXTURE_2D, texture);
-		//texture parameters
+        
+		//Texture parameters
+        //S and T represents Width and Height
+        //Sets how to handle if a texture coordinate is below 0 or above 1
+        //Clamp to Border tells the texture to send a color value instead of the texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		//filtering
+        
+		//Filtering
+        //MIN/MAG Filter tells which filter to use depending on if you're minimizing or magnifying the texture
+        //The linear filter takes a combination of the colors in the pixel around the specified point
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//load, create mipmap
-
-		int width = 64;
-		int height = 64;
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, BTH_IMAGE_DATA);
+        
+		glTexImage2D(           //Load texture data to graphics card
+            GL_TEXTURE_2D,      //It's a 2D texture
+            0,                  //Mipmap quality level. 0 is the highest quality
+            GL_RGBA,            //What format we use to save the texture on the graphics card
+            BTH_IMAGE_WIDTH,    //The texture's width
+            BTH_IMAGE_HEIGHT,   //The texture's height
+            0,                  //Legacy thingy
+            GL_RGBA,            //Format of the source image
+            GL_UNSIGNED_BYTE,   //Data type of the source
+            BTH_IMAGE_DATA      //Location of the image data
+        );
+        
+        //Create a mipmap
 		glGenerateMipmap(GL_TEXTURE_2D);
-
+        //Unbind texture object
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 
@@ -283,10 +316,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			}
 			else
 			{
-
-				
-
-				/////////////Rotate/////////////////
+				/////////////Rotation/////////////
 				glm::mat4 worldMatrix;
 				worldMatrix = glm::rotate(worldMatrix, (GLfloat)timer.seconds(), glm::vec3(0.0f, -0.05f, 0.0f));
 
@@ -300,7 +330,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 				Render(); //9. Rendera
 
-				SwapBuffers(hDC); //10. Växla front- och back-buffer
+				SwapBuffers(hDC); //10. VÃ¤xla front- och back-buffer
 			}
 		}
 
